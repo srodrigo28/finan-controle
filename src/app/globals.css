@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+/* Modo escuro controlado por classe (aplicada cedo pelo ThemeScript) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Tokens ---------- */
+:root {
+  --bg: #f4f6f4;
+  --surface: #ffffff;
+  --surface-2: #eaeeeb;
+  --surface-3: #dfe5e1;
+  --text: #121716;
+  --text-2: #4d5b58;
+  --muted: #7a8987;
+  --border: #e1e7e3;
+  --accent: #0e9f6e;
+  --accent-strong: #0b7f58;
+  --accent-soft: rgba(14, 159, 110, 0.12);
+  --accent-fg: #ffffff;
+  --warn: #d38a05;
+  --warn-soft: rgba(211, 138, 5, 0.14);
+  --danger: #e5484d;
+  --danger-soft: rgba(229, 72, 77, 0.12);
+  --shadow: 0 1px 2px rgba(18, 23, 22, 0.05), 0 8px 24px -12px rgba(18, 23, 22, 0.15);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0b0e0f;
+  --surface: #131819;
+  --surface-2: #1a2123;
+  --surface-3: #232c2f;
+  --text: #f1f4f2;
+  --text-2: #b4bfbc;
+  --muted: #7f8c8a;
+  --border: #212a2c;
+  --accent: #2fd6a2;
+  --accent-strong: #5fe3b8;
+  --accent-soft: rgba(47, 214, 162, 0.14);
+  --accent-fg: #06261c;
+  --warn: #f2b23a;
+  --warn-soft: rgba(242, 178, 58, 0.16);
+  --danger: #ff6369;
+  --danger-soft: rgba(255, 99, 105, 0.14);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -16px rgba(0, 0, 0, 0.7);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-text: var(--text);
+  --color-text-2: var(--text-2);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-fg: var(--accent-fg);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+  --shadow-card: var(--shadow);
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+}
+
+/* ---------- Base ---------- */
+html { height: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+* { -webkit-tap-highlight-color: transparent; }
+button, [role="button"] { touch-action: manipulation; }
+input, select, textarea { font: inherit; }
+::selection { background: var(--accent-soft); }
+
+/* Valores monetários: números tabulares para alinhar centavos */
+.tnum { font-variant-numeric: tabular-nums lining-nums; letter-spacing: -0.01em; }
+.moeda-grande { font-variant-numeric: tabular-nums; letter-spacing: -0.035em; line-height: 1; font-weight: 600; }
+
+/* Superfícies */
+.cartao {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%);
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+  border-radius: 0.75rem;
+}
+.sem-scrollbar::-webkit-scrollbar { display: none; }
+.sem-scrollbar { scrollbar-width: none; }
+
+/* Foco acessível */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* Aurora sutil de fundo para cabeçalhos */
+.fundo-aurora {
+  background:
+    radial-gradient(60% 50% at 20% 0%, var(--accent-soft), transparent 70%),
+    radial-gradient(40% 40% at 90% 10%, rgba(211, 138, 5, 0.08), transparent 70%);
+}
+
+/* Botão de ação primário com brilho interno */
+.botao-brilho {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 20px -8px var(--accent);
+}

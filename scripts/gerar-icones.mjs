@@ -1,0 +1,18 @@
+import sharp from "sharp";
+import { writeFileSync } from "node:fs";
+const svg = (pad) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f1a17"/><stop offset="1" stop-color="#0b0e0f"/></linearGradient>
+<linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5fe3b8"/><stop offset="1" stop-color="#2fd6a2"/></linearGradient></defs>
+<rect width="512" height="512" rx="${pad ? 0 : 112}" fill="url(#g)"/>
+<g transform="translate(${pad ? 96 : 76} ${pad ? 96 : 76}) scale(${pad ? 0.625 : 0.703})">
+<path d="M64 120h48l52 224h232l40-160H150" fill="none" stroke="url(#a)" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="192" cy="416" r="30" fill="url(#a)"/><circle cx="368" cy="416" r="30" fill="url(#a)"/>
+<path d="M232 236h96M280 188v96" stroke="#0b0e0f" stroke-width="30" stroke-linecap="round" opacity="0"/>
+</g></svg>`;
+writeFileSync("public/icons/icon.svg", svg(false));
+await sharp(Buffer.from(svg(false))).resize(192).png().toFile("public/icons/icon-192.png");
+await sharp(Buffer.from(svg(false))).resize(512).png().toFile("public/icons/icon-512.png");
+await sharp(Buffer.from(svg(true))).resize(512).png().toFile("public/icons/icon-maskable-512.png");
+await sharp(Buffer.from(svg(false))).resize(180).png().toFile("public/icons/apple-touch-icon.png");
+await sharp(Buffer.from(svg(false))).resize(32).png().toFile("src/app/icon.png");
+console.log("icones ok");
