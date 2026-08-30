@@ -63,7 +63,7 @@ export default function PaginaSemana() {
               onClick={() => setInicio(s)}
               className={cn(
                 "flex w-[72px] shrink-0 flex-col items-center rounded-2xl border px-2 py-2.5 transition-colors",
-                ativa ? "border-transparent bg-text text-bg" : "border-border bg-surface text-text-2",
+                ativa ? "border-transparent bg-accent text-accent-fg botao-brilho" : "border-border bg-surface text-text-2",
               )}
             >
               <span className="text-[10px] uppercase tracking-wider opacity-70">{format(s, "MMM", { locale: ptBR })}</span>
