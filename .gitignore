@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# capturas do e2e (geradas por node e2e/fluxo.mjs)
+e2e/capturas/

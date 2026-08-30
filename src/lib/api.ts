@@ -3,7 +3,9 @@
 import { useAuth } from "@/stores/auth";
 import type { ErroApi } from "@/lib/tipos";
 
-export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8030").replace(/\/$/, "");
+// Em produção (Vercel) o padrão já é a API na VPS; sobrescreva com NEXT_PUBLIC_API_URL se precisar.
+const PADRAO = process.env.NODE_ENV === "production" ? "https://99dev.pro/finan-controle-api" : "http://localhost:8030";
+export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? PADRAO).replace(/\/$/, "");
 const PREFIXO = "/api/v1";
 
 export class ErroRequisicao extends Error {
