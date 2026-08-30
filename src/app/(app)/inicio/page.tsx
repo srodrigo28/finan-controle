@@ -17,6 +17,7 @@ import { format, startOfWeek } from "date-fns";
 import { BannerTeste } from "@/components/banner-teste";
 import { useMetricaSemanal } from "@/hooks/use-metricas";
 import { Anel } from "@/components/graficos/anel";
+import { Insights } from "@/components/insights";
 
 const entrada = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } };
 
@@ -109,6 +110,8 @@ export default function PaginaInicio() {
           </motion.div>
         </Link>
       </motion.div>
+
+      <motion.div variants={entrada}><Insights compacto /></motion.div>
 
       {/* Semana até agora — anel por categoria */}
       {semana && semana.total > 0 ? (

@@ -12,6 +12,7 @@ import { Valor } from "@/components/ui/valor";
 import { Skeleton, Secao, Vazio } from "@/components/ui/diversos";
 import { GraficoBarras } from "@/components/graficos/barras";
 import { Anel } from "@/components/graficos/anel";
+import { Insights } from "@/components/insights";
 import { moeda, pct } from "@/lib/formatar";
 import { cn } from "@/lib/utils";
 
@@ -96,6 +97,8 @@ export default function PaginaSemana() {
           </div>
         ) : null}
       </motion.section>
+
+      <Insights inicio={chave} titulo="O que chama atenção" />
 
       <Secao titulo="Por dia">
         <div className="cartao p-4 pt-8">
