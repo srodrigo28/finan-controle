@@ -10,7 +10,6 @@ import { Botao } from "@/components/ui/botao";
 import { Folha } from "@/components/ui/folha";
 import { Campo, CampoMoeda } from "@/components/ui/campo";
 import { IconeCategoria } from "@/components/ui/icone-categoria";
-import { Segmentado } from "@/components/ui/diversos";
 import { CORES_CATEGORIA, NOMES_ICONES, obterIcone } from "@/lib/icones";
 import { moeda } from "@/lib/formatar";
 import { cn } from "@/lib/utils";
@@ -119,80 +118,78 @@ export default function PaginaCategorias() {
 }
 
 function FolhaCategoria({ categoria, aoMudar, aoSalvar, aoArquivar, pais }: { categoria: Partial<Categoria> | null; aoMudar: (a: boolean) => void; aoSalvar: (d: Partial<Categoria>) => Promise<void>; aoArquivar?: () => Promise<void>; pais: Categoria[] }) {
-  const [nome, setNome] = useState("");
-  const [cor, setCor] = useState(CORES_CATEGORIA[0]);
-  const [icone, setIcone] = useState("shopping-cart");
-  const [paiId, setPaiId] = useState<string | null>(null);
-  const [orcamento, setOrcamento] = useState(0);
-  const [chave, setChave] = useState<string | null>(null);
-  const [salvando, setSalvando] = useState(false);
-
-  const id = categoria ? (categoria.id ?? `nova-${categoria.pai_id ?? ""}`) : null;
-  if (categoria && id !== chave) {
-    setChave(id);
-    setNome(categoria.nome ?? "");
-    setCor(categoria.cor ?? CORES_CATEGORIA[pais.length % CORES_CATEGORIA.length]);
-    setIcone(categoria.icone ?? "shopping-cart");
-    setPaiId(categoria.pai_id ?? null);
-    setOrcamento(categoria.orcamento_mensal ?? 0);
-  }
-
   return (
     <Folha aberta={!!categoria} aoMudar={aoMudar} titulo={categoria?.id ? "Editar categoria" : "Nova categoria"}>
-      <form className="space-y-5" onSubmit={async (e) => { e.preventDefault(); setSalvando(true); try { await aoSalvar({ id: categoria?.id, nome: nome.trim(), cor, icone, pai_id: paiId, orcamento_mensal: orcamento > 0 ? orcamento : null }); } finally { setSalvando(false); } }}>
-        <div className="flex items-center gap-4">
-          <motion.span key={cor + icone} initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="grid size-16 shrink-0 place-items-center rounded-2xl" style={{ backgroundColor: `${cor}22`, color: cor }}>
-            {createElement(obterIcone(icone), { className: "size-8", strokeWidth: 2.2 })}
-          </motion.span>
-          <Campo rotulo="Nome" placeholder="Ex.: Mercado" value={nome} onChange={(e) => setNome(e.target.value)} required className="flex-1" />
-        </div>
-
-        <div>
-          <p className="mb-2 text-sm font-medium text-text-2">Cor</p>
-          <div className="flex flex-wrap gap-2">
-            {CORES_CATEGORIA.map((c) => (
-              <button key={c} type="button" aria-label={c} onClick={() => setCor(c)} className={cn("grid size-9 place-items-center rounded-full transition-transform", cor === c && "scale-110 ring-2 ring-text ring-offset-2 ring-offset-surface")} style={{ backgroundColor: c }}>
-                {cor === c ? <Check className="size-4 text-white" /> : null}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <p className="mb-2 text-sm font-medium text-text-2">Ícone</p>
-          <div className="grid grid-cols-8 gap-2">
-            {NOMES_ICONES.map((n) => (
-              <button key={n} type="button" aria-label={n} onClick={() => setIcone(n)} className={cn("grid aspect-square place-items-center rounded-xl bg-surface-2 text-text-2 transition-colors", icone === n && "bg-text text-bg")}>
-                {createElement(obterIcone(n), { className: "size-5" })}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {!categoria?.id || categoria.pai_id !== undefined ? (
-          <div>
-            <p className="mb-2 text-sm font-medium text-text-2">Dentro de</p>
-            <Segmentado
-              opcoes={[{ valor: "", rotulo: "Principal" }, ...pais.filter((p) => p.id !== categoria?.id).slice(0, 3).map((p) => ({ valor: p.id, rotulo: p.nome }))]}
-              valor={paiId ?? ""}
-              aoMudar={(v) => setPaiId(v || null)}
-            />
-            {pais.length > 3 ? (
-              <select value={paiId ?? ""} onChange={(e) => setPaiId(e.target.value || null)} className="mt-2 h-11 w-full rounded-xl border border-border bg-surface px-3">
-                <option value="">Categoria principal</option>
-                {pais.filter((p) => p.id !== categoria?.id).map((p) => <option key={p.id} value={p.id}>{p.nome}</option>)}
-              </select>
-            ) : null}
-          </div>
-        ) : null}
-
-        <CampoMoeda key={chave} rotulo="Orçamento mensal (opcional)" valor={orcamento} aoMudar={setOrcamento} dica="Você recebe alerta quando o gasto passar deste valor." />
-
-        <div className="flex gap-3">
-          {aoArquivar ? <Botao type="button" variante="perigo" tamanho="icone" aria-label="Arquivar" onClick={aoArquivar}><Archive className="size-5" /></Botao> : null}
-          <Botao type="submit" tamanho="lg" cheio carregando={salvando} disabled={!nome.trim()}>Salvar</Botao>
-        </div>
-      </form>
+      {/* O formulário monta a cada abertura: o estado sempre parte da categoria recebida (ou vazio). */}
+      {categoria ? <FormularioCategoria categoria={categoria} aoSalvar={aoSalvar} aoArquivar={aoArquivar} pais={pais} /> : null}
     </Folha>
+  );
+}
+
+function FormularioCategoria({ categoria, aoSalvar, aoArquivar, pais }: { categoria: Partial<Categoria>; aoSalvar: (d: Partial<Categoria>) => Promise<void>; aoArquivar?: () => Promise<void>; pais: Categoria[] }) {
+  const [nome, setNome] = useState(categoria.nome ?? "");
+  const [cor, setCor] = useState(categoria.cor ?? CORES_CATEGORIA[pais.length % CORES_CATEGORIA.length]);
+  const [icone, setIcone] = useState(categoria.icone ?? "shopping-cart");
+  const [paiId, setPaiId] = useState<string | null>(categoria.pai_id ?? null);
+  const [orcamento, setOrcamento] = useState(categoria.orcamento_mensal ?? 0);
+  const [salvando, setSalvando] = useState(false);
+
+  return (
+    <form
+      className="space-y-5"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        setSalvando(true);
+        try {
+          await aoSalvar({ id: categoria.id, nome: nome.trim(), cor, icone, pai_id: paiId, orcamento_mensal: orcamento > 0 ? orcamento : null });
+        } finally {
+          setSalvando(false);
+        }
+      }}
+    >
+      <div className="flex items-center gap-4">
+        <motion.span key={cor + icone} initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="grid size-16 shrink-0 place-items-center rounded-2xl" style={{ backgroundColor: `${cor}22`, color: cor }}>
+          {createElement(obterIcone(icone), { className: "size-8", strokeWidth: 2.2 })}
+        </motion.span>
+        <Campo rotulo="Nome" placeholder="Ex.: Mercado" value={nome} onChange={(e) => setNome(e.target.value)} required className="flex-1" autoFocus />
+      </div>
+
+      <div>
+        <p className="mb-2 text-sm font-medium text-text-2">Cor</p>
+        <div className="flex flex-wrap gap-2">
+          {CORES_CATEGORIA.map((c) => (
+            <button key={c} type="button" aria-label={c} onClick={() => setCor(c)} className={cn("grid size-9 place-items-center rounded-full transition-transform", cor === c && "scale-110 ring-2 ring-text ring-offset-2 ring-offset-surface")} style={{ backgroundColor: c }}>
+              {cor === c ? <Check className="size-4 text-white" /> : null}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="mb-2 text-sm font-medium text-text-2">Ícone</p>
+        <div className="grid grid-cols-8 gap-2">
+          {NOMES_ICONES.map((n) => (
+            <button key={n} type="button" aria-label={n} onClick={() => setIcone(n)} className={cn("grid aspect-square place-items-center rounded-xl bg-surface-2 text-text-2 transition-colors", icone === n && "bg-accent text-accent-fg")}>
+              {createElement(obterIcone(n), { className: "size-5" })}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="mb-2 text-sm font-medium text-text-2">Dentro de</p>
+        <select value={paiId ?? ""} onChange={(e) => setPaiId(e.target.value || null)} className="h-11 w-full rounded-xl border border-border bg-surface px-3">
+          <option value="">Categoria principal</option>
+          {pais.filter((c) => c.id !== categoria.id).map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
+        </select>
+      </div>
+
+      <CampoMoeda rotulo="Orçamento mensal (opcional)" valor={orcamento} aoMudar={setOrcamento} dica="Você recebe alerta quando o gasto passar deste valor." />
+
+      <div className="flex gap-3">
+        {aoArquivar ? <Botao type="button" variante="perigo" tamanho="icone" aria-label="Arquivar" onClick={aoArquivar}><Archive className="size-5" /></Botao> : null}
+        <Botao type="submit" tamanho="lg" cheio carregando={salvando} disabled={!nome.trim()}>Salvar</Botao>
+      </div>
+    </form>
   );
 }

@@ -151,6 +151,14 @@ function LinhaOcorrencia({ o, categoria, aoPagar, aoReabrir }: { o: OcorrenciaCo
 }
 
 function FolhaConta({ aberta, aoMudar, conta, aoSalvar }: { aberta: boolean; aoMudar: (a: boolean) => void; conta: ContaAgendada | null; aoSalvar: (d: Partial<ContaAgendada>) => Promise<void> }) {
+  return (
+    <Folha aberta={aberta} aoMudar={aoMudar} titulo={conta ? "Editar conta" : "Nova conta"} descricao="Valor fixo ou estimado — você informa o real ao pagar.">
+      {aberta ? <FormularioConta conta={conta} aoSalvar={aoSalvar} /> : null}
+    </Folha>
+  );
+}
+
+function FormularioConta({ conta, aoSalvar }: { conta: ContaAgendada | null; aoSalvar: (d: Partial<ContaAgendada>) => Promise<void> }) {
   const [nome, setNome] = useState(conta?.nome ?? "");
   const [valor, setValor] = useState(conta?.valor_estimado ?? 0);
   const [dia, setDia] = useState(conta?.dia_vencimento ?? 10);
@@ -158,63 +166,73 @@ function FolhaConta({ aberta, aoMudar, conta, aoSalvar }: { aberta: boolean; aoM
   const [categoria, setCategoria] = useState<string | null>(conta?.categoria_id ?? null);
   const [lembrete, setLembrete] = useState(conta?.lembrete_dias ?? 3);
   const [salvando, setSalvando] = useState(false);
-  const [chave, setChave] = useState(conta?.id ?? "nova");
-
-  // Recarrega campos quando muda a conta editada
-  if ((conta?.id ?? "nova") !== chave) {
-    setChave(conta?.id ?? "nova");
-    setNome(conta?.nome ?? "");
-    setValor(conta?.valor_estimado ?? 0);
-    setDia(conta?.dia_vencimento ?? 10);
-    setRec(conta?.recorrencia ?? "mensal");
-    setCategoria(conta?.categoria_id ?? null);
-    setLembrete(conta?.lembrete_dias ?? 3);
-  }
 
   return (
-    <Folha aberta={aberta} aoMudar={aoMudar} titulo={conta ? "Editar conta" : "Nova conta"} descricao="Valor fixo ou estimado — você informa o real ao pagar.">
-      <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); setSalvando(true); try { await aoSalvar({ nome: nome.trim(), valor_estimado: valor, dia_vencimento: dia, recorrencia: rec, categoria_id: categoria, lembrete_dias: lembrete }); } finally { setSalvando(false); } }}>
-        <Campo rotulo="Nome" placeholder="Ex.: Energia, Internet, Aluguel" value={nome} onChange={(e) => setNome(e.target.value)} required />
-        <CampoMoeda key={chave} rotulo="Valor estimado" valor={valor} aoMudar={setValor} />
-        <div className="grid grid-cols-2 gap-3">
-          <Campo rotulo={rec === "semanal" ? "Dia da semana (1=seg)" : "Dia do vencimento"} type="number" min={1} max={rec === "semanal" ? 7 : 31} value={dia} onChange={(e) => setDia(Number(e.target.value))} inputMode="numeric" />
-          <Campo rotulo="Lembrar (dias antes)" type="number" min={0} max={30} value={lembrete} onChange={(e) => setLembrete(Number(e.target.value))} inputMode="numeric" />
-        </div>
-        <div>
-          <p className="mb-2 text-sm font-medium text-text-2">Recorrência</p>
-          <div className="flex flex-wrap gap-2">{RECORRENCIAS.map((r) => <Chip key={r.valor} ativo={rec === r.valor} onClick={() => setRec(r.valor)}>{r.rotulo}</Chip>)}</div>
-        </div>
-        <div>
-          <p className="mb-2 text-sm font-medium text-text-2">Categoria</p>
-          <SeletorCategoria valor={categoria} aoMudar={setCategoria} priorizarPaiNome="Contas fixas" permitirNenhuma />
-        </div>
-        <Botao type="submit" tamanho="lg" cheio carregando={salvando} disabled={!nome.trim() || valor <= 0}>Salvar</Botao>
-      </form>
-    </Folha>
+    <form
+      className="space-y-4"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        setSalvando(true);
+        try {
+          await aoSalvar({ nome: nome.trim(), valor_estimado: valor, dia_vencimento: dia, recorrencia: rec, categoria_id: categoria, lembrete_dias: lembrete });
+        } finally {
+          setSalvando(false);
+        }
+      }}
+    >
+      <Campo rotulo="Nome" placeholder="Ex.: Energia, Internet, Aluguel" value={nome} onChange={(e) => setNome(e.target.value)} required autoFocus />
+      <CampoMoeda rotulo="Valor estimado" valor={valor} aoMudar={setValor} />
+      <div className="grid grid-cols-2 gap-3">
+        <Campo rotulo={rec === "semanal" ? "Dia da semana (1=seg)" : "Dia do vencimento"} type="number" min={1} max={rec === "semanal" ? 7 : 31} value={dia} onChange={(e) => setDia(Number(e.target.value))} inputMode="numeric" />
+        <Campo rotulo="Lembrar (dias antes)" type="number" min={0} max={30} value={lembrete} onChange={(e) => setLembrete(Number(e.target.value))} inputMode="numeric" />
+      </div>
+      <div>
+        <p className="mb-2 text-sm font-medium text-text-2">Recorrência</p>
+        <div className="flex flex-wrap gap-2">{RECORRENCIAS.map((r) => <Chip key={r.valor} ativo={rec === r.valor} onClick={() => setRec(r.valor)}>{r.rotulo}</Chip>)}</div>
+      </div>
+      <div>
+        <p className="mb-2 text-sm font-medium text-text-2">Categoria</p>
+        <SeletorCategoria valor={categoria} aoMudar={setCategoria} priorizarPaiNome="Contas fixas" permitirNenhuma />
+      </div>
+      <Botao type="submit" tamanho="lg" cheio carregando={salvando} disabled={!nome.trim() || valor <= 0}>Salvar</Botao>
+    </form>
   );
 }
 
 function FolhaPagar({ ocorrencia, aoMudar, aoConfirmar }: { ocorrencia: OcorrenciaConta | null; aoMudar: (a: boolean) => void; aoConfirmar: (d: { valor_real: number; data: string; forma_pagamento?: string }) => Promise<void> }) {
-  const [valor, setValor] = useState(0);
+  return (
+    <Folha aberta={!!ocorrencia} aoMudar={aoMudar} titulo={`Pagar ${ocorrencia?.conta.nome ?? ""}`} descricao="Vira um lançamento do dia. Ajuste se o valor real for diferente.">
+      {ocorrencia ? <FormularioPagar ocorrencia={ocorrencia} aoConfirmar={aoConfirmar} /> : null}
+    </Folha>
+  );
+}
+
+function FormularioPagar({ ocorrencia, aoConfirmar }: { ocorrencia: OcorrenciaConta; aoConfirmar: (d: { valor_real: number; data: string; forma_pagamento?: string }) => Promise<void> }) {
+  const [valor, setValor] = useState(ocorrencia.valor_real ?? ocorrencia.conta.valor_estimado);
   const [data, setData] = useState(hojeISO());
   const [forma, setForma] = useState<string | undefined>();
   const [salvando, setSalvando] = useState(false);
-  const [chave, setChave] = useState<string | null>(null);
-  if (ocorrencia && ocorrencia.id !== chave) {
-    setChave(ocorrencia.id);
-    setValor(ocorrencia.valor_real ?? ocorrencia.conta.valor_estimado);
-    setData(hojeISO());
-  }
   return (
-    <Folha aberta={!!ocorrencia} aoMudar={aoMudar} titulo={`Pagar ${ocorrencia?.conta.nome ?? ""}`} descricao="Vira um lançamento do dia. Ajuste se o valor real for diferente.">
-      <div className="space-y-4">
-        <CampoMoeda key={chave} rotulo="Valor pago" valor={valor} aoMudar={setValor} grande autoFocus />
-        <Campo rotulo="Data do pagamento" type="date" value={data} onChange={(e) => setData(e.target.value)} />
-        <div className="flex flex-wrap gap-2">{FORMAS_PAGAMENTO.map((f) => <Chip key={f.valor} ativo={forma === f.valor} onClick={() => setForma(forma === f.valor ? undefined : f.valor)}>{f.rotulo}</Chip>)}</div>
-        <Botao tamanho="lg" cheio carregando={salvando} disabled={valor <= 0} onClick={async () => { setSalvando(true); try { await aoConfirmar({ valor_real: valor, data, forma_pagamento: forma }); } finally { setSalvando(false); } }}>
-          Confirmar pagamento
-        </Botao>
-      </div>
-    </Folha>
+    <div className="space-y-4">
+      <CampoMoeda rotulo="Valor pago" valor={valor} aoMudar={setValor} grande autoFocus />
+      <Campo rotulo="Data do pagamento" type="date" value={data} onChange={(e) => setData(e.target.value)} />
+      <div className="flex flex-wrap gap-2">{FORMAS_PAGAMENTO.map((f) => <Chip key={f.valor} ativo={forma === f.valor} onClick={() => setForma(forma === f.valor ? undefined : f.valor)}>{f.rotulo}</Chip>)}</div>
+      <Botao
+        tamanho="lg"
+        cheio
+        carregando={salvando}
+        disabled={valor <= 0}
+        onClick={async () => {
+          setSalvando(true);
+          try {
+            await aoConfirmar({ valor_real: valor, data, forma_pagamento: forma });
+          } finally {
+            setSalvando(false);
+          }
+        }}
+      >
+        Confirmar pagamento
+      </Botao>
+    </div>
   );
 }
