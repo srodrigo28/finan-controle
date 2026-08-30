@@ -4,7 +4,8 @@ import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
-import { CheckCircle2, Equal, TrendingDown, TrendingUp } from "lucide-react";
+import { CheckCircle2, Equal, TrendingDown, TrendingUp, Paperclip } from "lucide-react";
+import Link from "next/link";
 import { useSessao } from "@/hooks/use-sessoes";
 import { Cabecalho } from "@/components/layout/cabecalho";
 import { CampoMoeda } from "@/components/ui/campo";
@@ -37,10 +38,7 @@ export default function PaginaFechar({ params }: PageProps<"/mercado/[id]/fechar
     vibrar(30);
     await fechar({ total_pago: arredondar(valorPago), motivo_divergencia: divergiu ? motivo : null });
     setConcluido(true);
-    setTimeout(() => {
-      toast.success("Compra registrada como um lançamento");
-      roteador.replace("/inicio");
-    }, 1100);
+    toast.success("Compra registrada como um lançamento");
   };
 
   return (
@@ -55,6 +53,16 @@ export default function PaginaFechar({ params }: PageProps<"/mercado/[id]/fechar
             </motion.span>
             <p className="text-2xl font-semibold">Compra fechada</p>
             <Valor valor={valorPago} tamanho="xl" />
+            <div className="mt-4 flex w-full max-w-xs flex-col gap-2">
+              {sessao.lancamento_id ? (
+                <Link href={`/lancamentos/${sessao.lancamento_id}`}>
+                  <Botao cheio variante="secundario"><Paperclip className="size-4" /> Anexar cupom fiscal</Botao>
+                </Link>
+              ) : (
+                <p className="text-xs text-text-2">Sem sinal agora — o lançamento aparece assim que sincronizar; anexe o cupom por lá.</p>
+              )}
+              <Botao cheio onClick={() => roteador.replace("/inicio")}>Ir para o início</Botao>
+            </div>
           </motion.div>
         ) : (
           <motion.div key="form" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">

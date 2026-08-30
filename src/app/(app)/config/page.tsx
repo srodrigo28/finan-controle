@@ -11,6 +11,7 @@ import { Campo, CampoMoeda } from "@/components/ui/campo";
 import { Botao } from "@/components/ui/botao";
 import { Secao, Segmentado } from "@/components/ui/diversos";
 import type { Usuario } from "@/lib/tipos";
+import { NotificacoesPush } from "@/components/notificacoes-push";
 
 export default function PaginaConfig() {
   const { usuario, atualizarUsuario } = useAuth();
@@ -63,6 +64,10 @@ export default function PaginaConfig() {
           <CampoMoeda rotulo="Orçamento diário" valor={diario} aoMudar={setDiario} dica="Mostra no início quanto ainda cabe hoje." />
           <Botao cheio onClick={salvar} carregando={salvando}><Save className="size-4" /> Salvar</Botao>
         </div>
+      </Secao>
+
+      <Secao titulo="Notificações">
+        <NotificacoesPush />
       </Secao>
 
       <Secao titulo="Aparência">
