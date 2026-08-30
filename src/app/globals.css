@@ -127,3 +127,31 @@ input, select, textarea { font: inherit; }
 .botao-brilho {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 20px -8px var(--accent);
 }
+
+/* ---------- Landing (marketing) — paleta própria, sempre a mesma nos dois temas ---------- */
+.landing {
+  --l-verde: #0c3b2e;
+  --l-verde-2: #0f4a3a;
+  --l-verde-3: #14634d;
+  --l-menta: #2fd6a2;
+  --l-menta-2: #7ff0c9;
+  --l-creme: #f6f4ee;
+  --l-creme-2: #ece8dd;
+  --l-ambar: #f2b23a;
+  --l-coral: #ff6b6b;
+  --l-tinta: #0e1613;
+  --l-tinta-2: #4b5a55;
+  --font-display: var(--font-sora), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  background: var(--l-creme);
+  color: var(--l-tinta);
+  color-scheme: light;
+}
+.landing h1, .landing h2, .landing h3, .landing .display { font-family: var(--font-display); letter-spacing: -0.03em; }
+.landing .grade-pontos {
+  background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.landing .brilho-menta { box-shadow: 0 0 0 1px rgba(47,214,162,.35), 0 20px 60px -20px rgba(47,214,162,.55); }
+.landing .vidro { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(12px); }
+@keyframes flutuar { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
+.landing .flutuar { animation: flutuar 6s ease-in-out infinite; }

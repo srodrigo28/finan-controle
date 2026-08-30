@@ -7,7 +7,7 @@ import { House, ReceiptText, ShoppingCart, CalendarRange, Menu } from "lucide-re
 import { cn } from "@/lib/utils";
 
 const ABAS = [
-  { href: "/", rotulo: "Início", icone: House },
+  { href: "/inicio", rotulo: "Início", icone: House },
   { href: "/lancamentos", rotulo: "Lançamentos", icone: ReceiptText },
   { href: "/mercado", rotulo: "Mercado", icone: ShoppingCart, destaque: true },
   { href: "/semana", rotulo: "Semana", icone: CalendarRange },
@@ -17,7 +17,7 @@ const ABAS = [
 /** Navegação principal: bottom tab bar no celular, trilho lateral no desktop. */
 export function BarraAbas() {
   const caminho = usePathname();
-  const ativa = (href: string) => (href === "/" ? caminho === "/" : caminho.startsWith(href));
+  const ativa = (href: string) => caminho.startsWith(href);
 
   return (
     <>
@@ -72,7 +72,7 @@ export function BarraAbas() {
 
       {/* Desktop */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-border bg-surface px-4 py-6 md:flex">
-        <Link href="/" className="mb-8 flex items-center gap-2.5 px-2">
+        <Link href="/inicio" className="mb-8 flex items-center gap-2.5 px-2">
           <span className="grid size-9 place-items-center rounded-xl bg-accent text-accent-fg">
             <ShoppingCart className="size-5" strokeWidth={2.4} />
           </span>

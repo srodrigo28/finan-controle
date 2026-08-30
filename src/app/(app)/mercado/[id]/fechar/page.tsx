@@ -39,7 +39,7 @@ export default function PaginaFechar({ params }: PageProps<"/mercado/[id]/fechar
     setConcluido(true);
     setTimeout(() => {
       toast.success("Compra registrada como um lançamento");
-      roteador.replace("/");
+      roteador.replace("/inicio");
     }, 1100);
   };
 

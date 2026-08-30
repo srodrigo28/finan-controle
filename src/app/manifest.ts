@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Finan — controle antes do caixa",
     short_name: "Finan",
     description: "Controle financeiro pessoal com Modo Mercado: saiba o total antes de chegar no caixa.",
-    start_url: "/",
+    start_url: "/inicio",
     display: "standalone",
     orientation: "portrait",
     background_color: "#0b0e0f",

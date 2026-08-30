@@ -92,7 +92,7 @@ await shot(page, "11-fechar-divergencia");
 await page.getByRole("button", { name: /^Confirmar/ }).click();
 await page.waitForTimeout(900);
 await shot(page, "12-fechado");
-await page.waitForURL(`${base}/`, { timeout: 40000 });
+await page.waitForURL(`${base}/inicio`, { timeout: 40000 });
 await page.waitForTimeout(1200);
 await shot(page, "13-inicio");
 
@@ -119,7 +119,7 @@ await p2.goto(`${base}/entrar`);
 await p2.getByPlaceholder("voce@exemplo.com").fill(email);
 await p2.getByPlaceholder("Sua senha").fill("senha12345");
 await p2.getByRole("button", { name: "Entrar" }).click();
-await p2.waitForURL(`${base}/`);
+await p2.waitForURL(`${base}/inicio`);
 await p2.waitForTimeout(1500);
 await shot(p2, "21-inicio-claro");
 await p2.goto(`${base}/mercado`);

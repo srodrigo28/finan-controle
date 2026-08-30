@@ -91,7 +91,7 @@ export default function PaginaOnboarding() {
         <Botao tamanho="lg" cheio onClick={avancar} carregando={salvando}>
           {passo === "pronto" ? "Abrir Modo Mercado" : "Continuar"} <ArrowRight className="size-5" />
         </Botao>
-        {passo !== "pronto" ? <button type="button" onClick={() => roteador.replace("/")} className="w-full py-2 text-sm text-text-2">Pular por agora</button> : null}
+        {passo !== "pronto" ? <button type="button" onClick={() => roteador.replace("/inicio")} className="w-full py-2 text-sm text-text-2">Pular por agora</button> : null}
       </div>
     </div>
   );

@@ -36,7 +36,7 @@ export function FormularioAuth({ modo }: { modo: "entrar" | "cadastro" }) {
       });
       entrar(r);
       const proximo = params.get("proximo");
-      roteador.replace(modo === "cadastro" ? "/onboarding" : proximo && proximo.startsWith("/") ? proximo : "/");
+      roteador.replace(modo === "cadastro" ? "/onboarding" : proximo && proximo.startsWith("/") ? proximo : "/inicio");
     } catch (err) {
       const detalhe = err instanceof ErroRequisicao && err.detalhes ? Object.values(err.detalhes).find((v) => typeof v === "string") : null;
       const msg = err instanceof ErroRequisicao ? (typeof detalhe === "string" ? detalhe : err.message) : "Não foi possível conectar. Tente novamente.";
