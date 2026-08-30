@@ -7,6 +7,10 @@ export type Usuario = {
   moeda: "BRL";
   orcamento_mensal: number | null;
   orcamento_diario: number | null;
+  plano: "teste" | "completo";
+  teste_expira_em: string | null;
+  dias_restantes_teste: number | null;
+  teste_ativo: boolean;
   criado_em: string;
 };
 

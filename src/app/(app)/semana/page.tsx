@@ -10,7 +10,8 @@ import { useCategorias } from "@/hooks/use-categorias";
 import { Cabecalho } from "@/components/layout/cabecalho";
 import { Valor } from "@/components/ui/valor";
 import { Skeleton, Secao, Vazio } from "@/components/ui/diversos";
-import { GraficoBarras, BarrasCategoria } from "@/components/graficos/barras";
+import { GraficoBarras } from "@/components/graficos/barras";
+import { Anel } from "@/components/graficos/anel";
 import { moeda, pct } from "@/lib/formatar";
 import { cn } from "@/lib/utils";
 
@@ -110,9 +111,10 @@ export default function PaginaSemana() {
       <Secao titulo="Por categoria">
         <div className="cartao p-4">
           {data && data.por_categoria.length > 0 ? (
-            <BarrasCategoria
-              total={data.total}
-              linhas={data.por_categoria.map((c) => {
+            <Anel
+              titulo={moeda(data.total)}
+              subtitulo="na semana"
+              fatias={data.por_categoria.map((c) => {
                 const cat = c.categoria_id ? mapa.get(c.categoria_id) : null;
                 return { chave: c.categoria_id ?? "sem", nome: cat?.nome ?? "Sem categoria", cor: cat?.cor ?? "#7a8987", valor: c.total };
               })}

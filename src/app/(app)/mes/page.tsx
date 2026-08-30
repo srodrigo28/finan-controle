@@ -13,6 +13,7 @@ import { Cabecalho } from "@/components/layout/cabecalho";
 import { Valor } from "@/components/ui/valor";
 import { BarraOrcamento, Secao, Skeleton, Vazio } from "@/components/ui/diversos";
 import { GraficoBarras, BarrasCategoria } from "@/components/graficos/barras";
+import { Anel } from "@/components/graficos/anel";
 import { mesExtenso, moeda } from "@/lib/formatar";
 
 export default function PaginaMes() {
@@ -79,7 +80,17 @@ export default function PaginaMes() {
       </Secao>
 
       <Secao titulo="Por categoria" acao={<Link href="/categorias" className="text-sm font-medium text-accent">Orçamentos</Link>}>
-        <div className="cartao p-4">
+        <div className="cartao space-y-5 p-4">
+          {data && data.por_categoria.length > 0 ? (
+            <Anel
+              titulo={moeda(data.total_despesas)}
+              subtitulo="no mês"
+              fatias={data.por_categoria.map((c) => {
+                const cat = c.categoria_id ? mapa.get(c.categoria_id) : null;
+                return { chave: c.categoria_id ?? "sem", nome: cat?.nome ?? "Sem categoria", cor: cat?.cor ?? "#7a8987", valor: c.total };
+              })}
+            />
+          ) : null}
           {data && data.por_categoria.length > 0 ? (
             <BarrasCategoria
               total={data.total_despesas}

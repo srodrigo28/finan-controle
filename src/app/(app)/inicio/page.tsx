@@ -13,7 +13,10 @@ import { Valor } from "@/components/ui/valor";
 import { BarraOrcamento, Secao, Skeleton, Vazio } from "@/components/ui/diversos";
 import { LinhaLancamento } from "@/components/linha-lancamento";
 import { Botao } from "@/components/ui/botao";
-import { format } from "date-fns";
+import { format, startOfWeek } from "date-fns";
+import { BannerTeste } from "@/components/banner-teste";
+import { useMetricaSemanal } from "@/hooks/use-metricas";
+import { Anel } from "@/components/graficos/anel";
 
 const entrada = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } };
 
@@ -24,6 +27,7 @@ export default function PaginaInicio() {
   const { aberta } = useSessoes();
   const { mapa } = useCategorias();
   const { data: ocorrencias } = useOcorrencias(format(new Date(), "yyyy-MM"));
+  const { data: semana } = useMetricaSemanal(format(startOfWeek(new Date(), { weekStartsOn: 1 }), "yyyy-MM-dd"));
 
   const saudacao = (() => {
     const h = new Date().getHours();
@@ -46,6 +50,8 @@ export default function PaginaInicio() {
           <Plus className="size-5" />
         </Link>
       </motion.header>
+
+      <motion.div variants={entrada}><BannerTeste /></motion.div>
 
       {/* Cartão principal: gasto de hoje vs orçamento diário */}
       <motion.section variants={entrada} className="cartao fundo-aurora overflow-hidden p-5">
@@ -103,6 +109,27 @@ export default function PaginaInicio() {
           </motion.div>
         </Link>
       </motion.div>
+
+      {/* Semana até agora — anel por categoria */}
+      {semana && semana.total > 0 ? (
+        <motion.div variants={entrada}>
+          <Secao titulo="Esta semana" acao={<Link href="/semana" className="text-sm font-medium text-accent">Comparar</Link>}>
+            <div className="cartao p-4">
+              <Anel
+                tamanho={120}
+                espessura={14}
+                titulo={moeda(semana.total)}
+                subtitulo="7 dias"
+                maximo={4}
+                fatias={semana.por_categoria.map((c) => {
+                  const cat = c.categoria_id ? mapa.get(c.categoria_id) : null;
+                  return { chave: c.categoria_id ?? "sem", nome: cat?.nome ?? "Sem categoria", cor: cat?.cor ?? "#7a8987", valor: c.total };
+                })}
+              />
+            </div>
+          </Secao>
+        </motion.div>
+      ) : null}
 
       {/* Contas vencendo */}
       {vencendo.length > 0 ? (

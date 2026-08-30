@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth, useAuthHidratado } from "@/stores/auth";
+import { api } from "@/lib/api";
+import type { Usuario } from "@/lib/tipos";
 import { BarraAbas } from "@/components/layout/barra-abas";
 import { useOnline } from "@/hooks/use-online";
 import { WifiOff } from "lucide-react";
@@ -19,6 +21,15 @@ export default function LayoutApp({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (hidratado && !usuario) roteador.replace(`/entrar?proximo=${encodeURIComponent(caminho)}`);
   }, [hidratado, usuario, roteador, caminho]);
+
+  // Atualiza o perfil (plano, dias de teste, orçamentos) uma vez por sessão, quando houver rede.
+  const usuarioId = usuario?.id;
+  useEffect(() => {
+    if (!usuarioId || !navigator.onLine) return;
+    api<Usuario>("/auth/eu")
+      .then((u) => useAuth.getState().atualizarUsuario(u))
+      .catch(() => {});
+  }, [usuarioId]);
 
   if (!hidratado || !usuario) {
     return (

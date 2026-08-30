@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BarChart3, CalendarClock, Tags, Settings, ChevronRight, LogOut } from "lucide-react";
+import { BarChart3, CalendarClock, Tags, Settings, ChevronRight, LogOut, Sparkles } from "lucide-react";
 import { useAuth } from "@/stores/auth";
 import { Cabecalho } from "@/components/layout/cabecalho";
 
@@ -9,6 +9,7 @@ const ITENS = [
   { href: "/mes", rotulo: "Visão mensal", descricao: "Evolução, categorias e projeção", icone: BarChart3 },
   { href: "/contas", rotulo: "Contas agendadas", descricao: "Energia, água, internet, prestações", icone: CalendarClock },
   { href: "/categorias", rotulo: "Categorias", descricao: "Cores, ícones, subcategorias e orçamentos", icone: Tags },
+  { href: "/plano", rotulo: "Seu plano", descricao: "Teste grátis de 30 dias e Finan Completo", icone: Sparkles },
   { href: "/config", rotulo: "Configurações", descricao: "Perfil, orçamento, tema e exportação", icone: Settings },
 ];
 
