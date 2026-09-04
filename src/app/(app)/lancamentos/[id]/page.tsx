@@ -140,7 +140,7 @@ export default function PaginaDetalheLancamento({ params }: PageProps<"/lancamen
       </section>
 
       <Folha aberta={editando} aoMudar={setEditando} titulo="Editar lançamento">
-        <FormularioLancamento inicial={l} />
+        <FormularioLancamento inicial={l} emFolha />
       </Folha>
     </div>
   );

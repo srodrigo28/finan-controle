@@ -40,6 +40,8 @@ export default function LayoutApp({ children }: { children: React.ReactNode }) {
   }
 
   const imersivo = /^\/mercado\/[^/]+/.test(caminho);
+  // Telas de tarefa focada escondem a tab bar: o botão de ação fixo mora na mesma faixa.
+  const semAbas = imersivo || caminho === "/lancamentos/novo";
 
   return (
     <div className="min-h-dvh md:pl-60">
@@ -59,7 +61,7 @@ export default function LayoutApp({ children }: { children: React.ReactNode }) {
       <main className={imersivo ? "mx-auto w-full max-w-lg md:max-w-2xl" : "mx-auto w-full max-w-lg px-4 pb-28 md:max-w-3xl md:px-8 md:pb-12"}>
         {children}
       </main>
-      {!imersivo ? <BarraAbas /> : null}
+      {!semAbas ? <BarraAbas /> : null}
     </div>
   );
 }

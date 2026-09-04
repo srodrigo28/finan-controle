@@ -9,11 +9,12 @@ import { Campo, CampoMoeda } from "@/components/ui/campo";
 import { Botao } from "@/components/ui/botao";
 import { Chip, Segmentado } from "@/components/ui/diversos";
 import { SeletorCategoria } from "@/components/seletor-categoria";
+import { cn } from "@/lib/utils";
 import { FORMAS_PAGAMENTO, hojeISO } from "@/lib/formatar";
 import type { FormaPagamento, Lancamento, TipoLancamento } from "@/lib/tipos";
 
 /** Lançamento manual em menos de 10 segundos: valor primeiro, categoria em um toque. */
-export function FormularioLancamento({ inicial }: { inicial?: Lancamento }) {
+export function FormularioLancamento({ inicial, emFolha }: { inicial?: Lancamento; emFolha?: boolean }) {
   const roteador = useRouter();
   const { criar, atualizar } = useMutacoesLancamento();
   const [tipo, setTipo] = useState<TipoLancamento>(inicial?.tipo ?? "despesa");
@@ -46,7 +47,7 @@ export function FormularioLancamento({ inicial }: { inicial?: Lancamento }) {
   };
 
   return (
-    <form onSubmit={enviar} className="space-y-6 pb-28">
+    <form onSubmit={enviar} className={cn("space-y-6", emFolha ? "pb-2" : "pb-28")}>
       <Segmentado
         opcoes={[
           { valor: "despesa", rotulo: "Despesa" },
@@ -72,7 +73,16 @@ export function FormularioLancamento({ inicial }: { inicial?: Lancamento }) {
           ))}
         </div>
       </div>
-      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-lg px-4 pb-[calc(1rem+var(--safe-b))] pt-3 md:max-w-3xl md:px-8" style={{ background: "linear-gradient(to top, var(--bg) 60%, transparent)" }}>
+      {/* Na folha o botão acompanha o scroll do painel; na página fica fixo na zona do polegar
+          (a rota /lancamentos/novo esconde a tab bar, então nada cobre o botão). */}
+      <div
+        className={
+          emFolha
+            ? "sticky bottom-0 -mx-5 px-5 pb-1 pt-3"
+            : "fixed inset-x-0 bottom-0 z-20 mx-auto max-w-lg px-4 pb-[calc(1rem+var(--safe-b))] pt-3 md:max-w-3xl md:px-8"
+        }
+        style={{ background: `linear-gradient(to top, var(--${emFolha ? "surface" : "bg"}) 60%, transparent)` }}
+      >
         <Botao type="submit" tamanho="lg" cheio disabled={!valido} carregando={salvando}>
           {inicial ? "Salvar alterações" : tipo === "despesa" ? "Registrar despesa" : "Registrar receita"}
         </Botao>
