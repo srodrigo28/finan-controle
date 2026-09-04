@@ -25,8 +25,8 @@ export const Campo = forwardRef<HTMLInputElement, PropsCampo>(function Campo(
       {rotulo ? <span className="mb-1.5 block text-sm font-medium text-text-2">{rotulo}</span> : null}
       <span
         className={cn(
-          "flex h-12 items-center gap-2 rounded-xl border bg-surface px-3.5 transition-shadow focus-within:ring-2 focus-within:ring-accent/40",
-          erro ? "border-danger" : "border-border",
+          "flex h-12 items-center gap-2 rounded-xl border bg-surface px-3.5 transition-[box-shadow,border-color] focus-within:ring-2",
+          erro ? "border-danger focus-within:ring-danger/25" : "border-border focus-within:border-accent focus-within:ring-accent/25",
         )}
       >
         {prefixo ? <span className="text-muted">{prefixo}</span> : null}
@@ -67,9 +67,9 @@ export function CampoMoeda({ rotulo, erro, dica, valor, aoMudar, autoFocus, gran
       {rotulo ? <span className="mb-1.5 block text-sm font-medium text-text-2">{rotulo}</span> : null}
       <span
         className={cn(
-          "flex items-center gap-2 rounded-xl border bg-surface px-3.5 transition-shadow focus-within:ring-2 focus-within:ring-accent/40",
+          "flex items-center gap-2 rounded-xl border bg-surface px-3.5 transition-[box-shadow,border-color] focus-within:ring-2",
           grande ? "h-16" : "h-12",
-          erro ? "border-danger" : "border-border",
+          erro ? "border-danger focus-within:ring-danger/25" : "border-border focus-within:border-accent focus-within:ring-accent/25",
         )}
       >
         <span className={cn("font-medium text-muted", grande && "text-lg")}>R$</span>
@@ -111,8 +111,8 @@ export function AreaTexto({ rotulo, erro, dica, className, id, ...resto }: Props
       <textarea
         id={idFinal}
         className={cn(
-          "w-full rounded-xl border bg-surface px-3.5 py-3 text-base text-text outline-none placeholder:text-muted focus:ring-2 focus:ring-accent/40",
-          erro ? "border-danger" : "border-border",
+          "w-full rounded-xl border bg-surface px-3.5 py-3 text-base text-text outline-none transition-[box-shadow,border-color] placeholder:text-muted focus:ring-2",
+          erro ? "border-danger focus:ring-danger/25" : "border-border focus:border-accent focus:ring-accent/25",
           className,
         )}
         {...resto}

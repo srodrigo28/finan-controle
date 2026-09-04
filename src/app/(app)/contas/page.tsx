@@ -10,6 +10,7 @@ import { useContas, useOcorrencias } from "@/hooks/use-contas";
 import { useCategorias } from "@/hooks/use-categorias";
 import { Cabecalho } from "@/components/layout/cabecalho";
 import { Botao } from "@/components/ui/botao";
+import { BotaoFlutuante } from "@/components/ui/botao-flutuante";
 import { Folha } from "@/components/ui/folha";
 import { Confirmar } from "@/components/ui/confirmar";
 import { Campo, CampoMoeda } from "@/components/ui/campo";
@@ -42,14 +43,8 @@ export default function PaginaContas() {
   const visiveis = contas.filter((c) => (filtro === "ativas" ? c.ativa : !c.ativa));
 
   return (
-    <div className="space-y-5">
-      <Cabecalho
-        titulo="Contas"
-        voltar="/mais"
-        acoes={
-          <Botao tamanho="icone" aria-label="Nova conta" onClick={() => setEditando("nova")}><Plus className="size-5" strokeWidth={2.4} /></Botao>
-        }
-      />
+    <div className="space-y-5 pb-16">
+      <Cabecalho titulo="Contas" voltar="/mais" />
 
       <Segmentado opcoes={[{ valor: "mes", rotulo: "Este mês" }, { valor: "cadastro", rotulo: "Cadastradas" }]} valor={aba} aoMudar={setAba} />
 
@@ -129,6 +124,8 @@ export default function PaginaContas() {
           </ul>
         </>
       )}
+
+      <BotaoFlutuante rotulo="Nova conta" onClick={() => setEditando("nova")} />
 
       <FolhaConta
         aberta={editando !== null}

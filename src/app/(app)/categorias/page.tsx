@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Plus, Archive, ArchiveRestore, GripVertical, ChevronRight, Check } from "lucide-react";
 import { useCategorias } from "@/hooks/use-categorias";
 import { Cabecalho } from "@/components/layout/cabecalho";
+import { BotaoFlutuante } from "@/components/ui/botao-flutuante";
 import { Botao } from "@/components/ui/botao";
 import { Folha } from "@/components/ui/folha";
 import { Campo, CampoMoeda } from "@/components/ui/campo";
@@ -37,8 +38,8 @@ export default function PaginaCategorias() {
   };
 
   return (
-    <div className="space-y-5">
-      <Cabecalho titulo="Categorias" voltar="/mais" subtitulo="Arraste para reordenar. Toque para editar." acoes={<Botao tamanho="icone" aria-label="Nova categoria" onClick={() => setEditando({})}><Plus className="size-5" strokeWidth={2.4} /></Botao>} />
+    <div className="space-y-5 pb-16">
+      <Cabecalho titulo="Categorias" voltar="/mais" subtitulo="Arraste para reordenar. Toque para editar." />
 
       <Reorder.Group
         axis="y"
@@ -105,6 +106,8 @@ export default function PaginaCategorias() {
           ) : null}
         </div>
       ) : null}
+
+      <BotaoFlutuante rotulo="Nova categoria" onClick={() => setEditando({})} />
 
       <FolhaCategoria
         categoria={editando}
@@ -178,7 +181,7 @@ function FormularioCategoria({ categoria, aoSalvar, aoArquivar, pais }: { catego
 
       <div>
         <p className="mb-2 text-sm font-medium text-text-2">Dentro de</p>
-        <select value={paiId ?? ""} onChange={(e) => setPaiId(e.target.value || null)} className="h-11 w-full rounded-xl border border-border bg-surface px-3">
+        <select value={paiId ?? ""} onChange={(e) => setPaiId(e.target.value || null)} className="h-11 w-full rounded-xl border border-border bg-surface px-3 transition-[box-shadow,border-color] focus:border-accent focus:ring-2 focus:ring-accent/25">
           <option value="">Categoria principal</option>
           {pais.filter((c) => c.id !== categoria.id).map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
         </select>

@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { Plus, Search, ReceiptText, ChevronDown } from "lucide-react";
+import { Search, ReceiptText, ChevronDown } from "lucide-react";
 import { useLancamentos } from "@/hooks/use-lancamentos";
 import { useCategorias } from "@/hooks/use-categorias";
 import { Cabecalho } from "@/components/layout/cabecalho";
+import { BotaoFlutuante } from "@/components/ui/botao-flutuante";
 import { LinhaLancamento } from "@/components/linha-lancamento";
 import { Chip, Skeleton, Vazio } from "@/components/ui/diversos";
 import { Botao } from "@/components/ui/botao";
@@ -27,18 +27,10 @@ export default function PaginaLancamentos() {
   }, [consulta.data]);
 
   return (
-    <div className="space-y-4">
-      <Cabecalho
-        titulo="Lançamentos"
-        grande
-        acoes={
-          <Link href="/lancamentos/novo" aria-label="Novo lançamento" className="grid size-11 place-items-center rounded-full bg-accent text-accent-fg botao-brilho">
-            <Plus className="size-5" strokeWidth={2.4} />
-          </Link>
-        }
-      />
+    <div className="space-y-4 pb-16">
+      <Cabecalho titulo="Lançamentos" grande />
 
-      <label className="flex h-11 items-center gap-2 rounded-full border border-border bg-surface px-4">
+      <label className="flex h-11 items-center gap-2 rounded-full border border-border bg-surface px-4 transition-[box-shadow,border-color] focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/25">
         <Search className="size-4 text-muted" />
         <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar por descrição" className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted" />
       </label>
@@ -89,6 +81,8 @@ export default function PaginaLancamentos() {
           </Botao>
         </div>
       ) : null}
+
+      <BotaoFlutuante href="/lancamentos/novo" rotulo="Novo lançamento" />
     </div>
   );
 }
