@@ -19,6 +19,7 @@ import { BannerTeste } from "@/components/banner-teste";
 import { useMetricaSemanal } from "@/hooks/use-metricas";
 import { Anel } from "@/components/graficos/anel";
 import { Insights } from "@/components/insights";
+import { Sino } from "@/components/notificacoes/sino";
 
 const entrada = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } };
 
@@ -49,9 +50,7 @@ export default function PaginaInicio() {
           <p className="text-sm text-text-2">{saudacao}, {usuario.nome.split(" ")[0]}</p>
           <h1 className="text-[28px] font-semibold tracking-tight">{dataLonga(hoje)}</h1>
         </div>
-        <Link href="/lancamentos/novo" aria-label="Novo lançamento" className="grid size-11 place-items-center rounded-full bg-surface-2 text-text hover:bg-surface-3">
-          <Plus className="size-5" />
-        </Link>
+        <Sino />
       </motion.header>
 
       <motion.div variants={entrada}><BannerTeste /></motion.div>

@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import type { Usuario } from "@/lib/tipos";
 import { BarraAbas } from "@/components/layout/barra-abas";
 import { FolhaLimite } from "@/components/folha-limite";
+import { ConviteInstalar } from "@/components/convite-instalar";
 import { useOnline } from "@/hooks/use-online";
 import { WifiOff } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -64,6 +65,7 @@ export default function LayoutApp({ children }: { children: React.ReactNode }) {
       </main>
       {!semAbas ? <BarraAbas /> : null}
       <FolhaLimite />
+      <ConviteInstalar />
     </div>
   );
 }

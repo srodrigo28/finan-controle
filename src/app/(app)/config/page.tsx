@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Download, Moon, Sun, MonitorSmartphone, Save } from "lucide-react";
+import { Bell, Download, Moon, Sun, MonitorSmartphone, Save } from "lucide-react";
 import { useAuth } from "@/stores/auth";
 import { useTema, type Tema } from "@/hooks/use-tema";
 import { api, API_URL } from "@/lib/api";
@@ -11,7 +11,6 @@ import { Campo, CampoMoeda } from "@/components/ui/campo";
 import { Botao } from "@/components/ui/botao";
 import { Secao, Segmentado } from "@/components/ui/diversos";
 import type { Usuario } from "@/lib/tipos";
-import { NotificacoesPush } from "@/components/notificacoes-push";
 
 export default function PaginaConfig() {
   const { usuario, atualizarUsuario } = useAuth();
@@ -66,8 +65,18 @@ export default function PaginaConfig() {
         </div>
       </Secao>
 
+      {/* Push nativo desligado por ora (decisão N6b): a central no sino cobre o aviso em qualquer
+          aparelho, sem permissão nem instalação. `NotificacoesPush` segue no código e as inscrições
+          continuam no banco — religar é voltar o cron da VPS. */}
       <Secao titulo="Notificações">
-        <NotificacoesPush />
+        <div className="cartao flex items-start gap-3 p-4">
+          <span className="mt-0.5 shrink-0 text-accent"><Bell className="size-5" /></span>
+          <p className="text-sm text-text-2">
+            Contas vencendo, orçamento estourado e o que mais precisar da sua atenção aparecem no
+            <span className="font-medium text-text"> sino, no topo do Início</span> — em qualquer
+            aparelho, sem precisar autorizar nada.
+          </p>
+        </div>
       </Secao>
 
       <Secao titulo="Aparência">
@@ -98,7 +107,7 @@ export default function PaginaConfig() {
         </div>
       </Secao>
 
-      <p className="px-1 text-center text-xs text-muted">API: {API_URL}</p>
+      <p className="px-1 text-center text-xs text-muted">Versão {process.env.NEXT_PUBLIC_VERSAO ?? "—"} · API: {API_URL}</p>
     </div>
   );
 }

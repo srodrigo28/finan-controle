@@ -160,3 +160,16 @@ export type Paginado<T> = { dados: T[]; total: number; pagina: number; por_pagin
 export type Lista<T> = { dados: T[] };
 
 export type ErroApi = { erro: { codigo: string; mensagem: string; detalhes?: Record<string, unknown> } };
+
+export type Notificacao = {
+  id: string;
+  chave: string;
+  tipo: string;
+  nivel: "atencao" | "bom" | "info";
+  titulo: string;
+  corpo: string | null;
+  link: string | null;
+  lida: boolean;
+  resolvida: boolean;
+  criado_em: string;
+};
