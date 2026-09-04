@@ -7,6 +7,7 @@ import { Plus, Archive, ArchiveRestore, GripVertical, ChevronRight, Check } from
 import { useCategorias } from "@/hooks/use-categorias";
 import { Cabecalho } from "@/components/layout/cabecalho";
 import { BotaoFlutuante } from "@/components/ui/botao-flutuante";
+import { usePlano } from "@/hooks/use-plano";
 import { Botao } from "@/components/ui/botao";
 import { Folha } from "@/components/ui/folha";
 import { Campo, CampoMoeda } from "@/components/ui/campo";
@@ -18,6 +19,7 @@ import type { Categoria } from "@/lib/tipos";
 
 export default function PaginaCategorias() {
   const { categorias, raizes, filhasDe, criar, atualizar, arquivar, reordenar } = useCategorias(true);
+  const { aoCriar } = usePlano();
   const [editando, setEditando] = useState<Partial<Categoria> | null>(null);
   const [mostrarArquivadas, setMostrarArquivadas] = useState(false);
   const [ordem, setOrdem] = useState<string[] | null>(null);
@@ -107,7 +109,7 @@ export default function PaginaCategorias() {
         </div>
       ) : null}
 
-      <BotaoFlutuante rotulo="Nova categoria" onClick={() => setEditando({})} />
+      <BotaoFlutuante rotulo="Nova categoria" onClick={aoCriar(() => setEditando({}))} />
 
       <FolhaCategoria
         categoria={editando}

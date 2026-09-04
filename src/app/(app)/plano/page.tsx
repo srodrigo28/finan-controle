@@ -41,6 +41,11 @@ export default function PaginaPlano() {
             <p className="text-xs text-text-2">
               {usuario.teste_expira_em ? `${acabou ? "Terminou" : "Termina"} em ${dataLonga(usuario.teste_expira_em.slice(0, 10)).toLowerCase()}` : ""} · sem cartão, nada é cobrado automaticamente
             </p>
+            {!acabou ? (
+              <p className="text-xs font-medium text-accent">
+                Tudo liberado até lá: nenhum recurso fica bloqueado durante o teste.
+              </p>
+            ) : null}
           </div>
         ) : null}
       </section>

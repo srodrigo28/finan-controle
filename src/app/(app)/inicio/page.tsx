@@ -7,8 +7,9 @@ import { useAuth } from "@/stores/auth";
 import { useMetricaDiaria } from "@/hooks/use-metricas";
 import { useSessoes } from "@/hooks/use-sessoes";
 import { useCategorias } from "@/hooks/use-categorias";
+import { useHoje } from "@/hooks/use-hoje";
 import { useOcorrencias } from "@/hooks/use-contas";
-import { hojeISO, dataLonga, moeda } from "@/lib/formatar";
+import { dataLonga, moeda } from "@/lib/formatar";
 import { Valor } from "@/components/ui/valor";
 import { BarraOrcamento, Secao, Skeleton, Vazio } from "@/components/ui/diversos";
 import { LinhaLancamento } from "@/components/linha-lancamento";
@@ -23,15 +24,16 @@ const entrada = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } };
 
 export default function PaginaInicio() {
   const usuario = useAuth((s) => s.usuario)!;
-  const hoje = hojeISO();
+  const agora = useHoje();
+  const hoje = format(agora, "yyyy-MM-dd");
   const { data: dia, isPending } = useMetricaDiaria(hoje);
   const { aberta } = useSessoes();
   const { mapa } = useCategorias();
-  const { data: ocorrencias } = useOcorrencias(format(new Date(), "yyyy-MM"));
-  const { data: semana } = useMetricaSemanal(format(startOfWeek(new Date(), { weekStartsOn: 1 }), "yyyy-MM-dd"));
+  const { data: ocorrencias } = useOcorrencias(format(agora, "yyyy-MM"));
+  const { data: semana } = useMetricaSemanal(format(startOfWeek(agora, { weekStartsOn: 1 }), "yyyy-MM-dd"));
 
   const saudacao = (() => {
-    const h = new Date().getHours();
+    const h = agora.getHours();
     return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite";
   })();
 

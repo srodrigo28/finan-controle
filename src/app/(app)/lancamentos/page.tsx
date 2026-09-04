@@ -6,6 +6,7 @@ import { useLancamentos } from "@/hooks/use-lancamentos";
 import { useCategorias } from "@/hooks/use-categorias";
 import { Cabecalho } from "@/components/layout/cabecalho";
 import { BotaoFlutuante } from "@/components/ui/botao-flutuante";
+import { usePlano } from "@/hooks/use-plano";
 import { LinhaLancamento } from "@/components/linha-lancamento";
 import { Chip, Skeleton, Vazio } from "@/components/ui/diversos";
 import { Botao } from "@/components/ui/botao";
@@ -17,6 +18,7 @@ export default function PaginaLancamentos() {
   const [busca, setBusca] = useState("");
   const [categoria, setCategoria] = useState<string | undefined>();
   const { mapa, raizes } = useCategorias();
+  const { podeCriar, abrirLimite } = usePlano();
   const consulta = useLancamentos({ tipo: tipo || undefined, busca: busca || undefined, categoria_id: categoria });
 
   const grupos = useMemo(() => {
@@ -82,7 +84,11 @@ export default function PaginaLancamentos() {
         </div>
       ) : null}
 
-      <BotaoFlutuante href="/lancamentos/novo" rotulo="Novo lançamento" />
+      {podeCriar ? (
+        <BotaoFlutuante href="/lancamentos/novo" rotulo="Novo lançamento" />
+      ) : (
+        <BotaoFlutuante rotulo="Novo lançamento" onClick={() => abrirLimite()} />
+      )}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { addMonths, format, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useMetricaMensal } from "@/hooks/use-metricas";
 import { useCategorias } from "@/hooks/use-categorias";
+import { useHoje } from "@/hooks/use-hoje";
 import { useAuth } from "@/stores/auth";
 import { Cabecalho } from "@/components/layout/cabecalho";
 import { Valor } from "@/components/ui/valor";
@@ -17,12 +18,16 @@ import { Anel } from "@/components/graficos/anel";
 import { mesExtenso, moeda } from "@/lib/formatar";
 
 export default function PaginaMes() {
-  const [ref, setRef] = useState(new Date());
+  const hoje = useHoje();
+  // `null` = seguindo o mês corrente (acompanha a virada sozinho).
+  const [escolha, setEscolha] = useState<Date | null>(null);
+  const ref = escolha ?? hoje;
   const mes = format(ref, "yyyy-MM");
+  const irPara = (d: Date) => setEscolha(format(d, "yyyy-MM") === format(hoje, "yyyy-MM") ? null : d);
   const { data, isPending } = useMetricaMensal(mes);
   const { mapa } = useCategorias();
   const usuario = useAuth((s) => s.usuario);
-  const ehAtual = mes === format(new Date(), "yyyy-MM");
+  const ehAtual = mes === format(hoje, "yyyy-MM");
 
   const evolucao = useMemo(() => {
     const anteriores = (data?.meses_anteriores ?? []).map((m) => ({ chave: m.mes, rotulo: format(new Date(`${m.mes}-01T12:00:00`), "MMM", { locale: ptBR }), valor: m.total }));
@@ -39,8 +44,8 @@ export default function PaginaMes() {
         voltar="/mais"
         acoes={
           <>
-            <button type="button" aria-label="Mês anterior" onClick={() => setRef(subMonths(ref, 1))} className="grid size-10 place-items-center rounded-full hover:bg-surface-2"><ChevronLeft className="size-5" /></button>
-            <button type="button" aria-label="Próximo mês" disabled={ehAtual} onClick={() => setRef(addMonths(ref, 1))} className="grid size-10 place-items-center rounded-full hover:bg-surface-2 disabled:opacity-30"><ChevronRight className="size-5" /></button>
+            <button type="button" aria-label="Mês anterior" onClick={() => irPara(subMonths(ref, 1))} className="grid size-10 place-items-center rounded-full hover:bg-surface-2"><ChevronLeft className="size-5" /></button>
+            <button type="button" aria-label="Próximo mês" disabled={ehAtual} onClick={() => irPara(addMonths(ref, 1))} className="grid size-10 place-items-center rounded-full hover:bg-surface-2 disabled:opacity-30"><ChevronRight className="size-5" /></button>
           </>
         }
       />

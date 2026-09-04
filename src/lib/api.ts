@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/stores/auth";
+import { useLimite } from "@/stores/limite";
 import type { ErroApi } from "@/lib/tipos";
 
 // Em produção (Vercel) o padrão já é a API na VPS; sobrescreva com NEXT_PUBLIC_API_URL se precisar.
@@ -80,6 +81,10 @@ export async function api<T>(caminho: string, opcoes: Opcoes = {}): Promise<T> {
       if (corpo?.erro) erro = corpo.erro;
     } catch {
       /* corpo não é JSON */
+    }
+    // 402 = teste vencido. A folha explica o que aconteceu em vez de um toast de erro cru.
+    if (resposta.status === 402 && erro.codigo === "TESTE_EXPIRADO") {
+      useLimite.getState().abrir(erro.mensagem);
     }
     throw new ErroRequisicao(resposta.status, erro);
   }

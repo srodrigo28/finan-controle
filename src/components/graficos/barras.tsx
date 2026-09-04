@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { moeda } from "@/lib/formatar";
 import { cn } from "@/lib/utils";
 
-export type PontoBarra = { rotulo: string; valor: number; chave: string; destaque?: boolean; sub?: string };
+export type PontoBarra = { rotulo: string; valor: number; chave: string; destaque?: boolean; sub?: string; /** Marca o dia/período corrente — visível mesmo com valor zero. */ hoje?: boolean };
 
 type Props = {
   dados: PontoBarra[];
@@ -64,6 +64,9 @@ export function GraficoBarras({ dados, altura = 160, selecionado, aoSelecionar, 
                 className={cn(
                   "w-full max-w-7 rounded-t-[4px] transition-colors",
                   d.valor === 0 ? "bg-surface-3" : on ? "bg-accent-strong" : d.destaque ? "bg-accent" : ativo === null ? "bg-accent" : "bg-accent/45",
+                  // Hoje aparece mesmo sem gasto: a barra ganha contorno em vez de sumir na base.
+                  d.hoje && "ring-2 ring-inset ring-accent",
+                  d.hoje && d.valor === 0 && "bg-accent-soft",
                 )}
               />
             </button>
@@ -72,7 +75,13 @@ export function GraficoBarras({ dados, altura = 160, selecionado, aoSelecionar, 
       </div>
       <div className="mt-2 flex gap-[6px]">
         {dados.map((d) => (
-          <span key={d.chave} className={cn("flex-1 truncate text-center text-[11px]", ativo === d.chave ? "font-semibold text-text" : "text-muted")}>
+          <span
+            key={d.chave}
+            className={cn(
+              "flex-1 truncate text-center text-[11px]",
+              ativo === d.chave ? "font-semibold text-text" : d.hoje ? "font-semibold text-accent" : "text-muted",
+            )}
+          >
             {d.rotulo}
           </span>
         ))}

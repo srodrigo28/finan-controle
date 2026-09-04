@@ -14,7 +14,9 @@ export function Provedores({ children }: { children: React.ReactNode }) {
           queries: {
             staleTime: 30_000,
             retry: 1,
-            refetchOnWindowFocus: false,
+            // O app volta do segundo plano mostrando dado de dias atrás se não revalidar aqui.
+            // Com staleTime de 30s isso não vira tempestade de requisição.
+            refetchOnWindowFocus: true,
             networkMode: "offlineFirst",
           },
           mutations: { networkMode: "offlineFirst" },

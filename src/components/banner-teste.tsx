@@ -5,13 +5,20 @@ import { Sparkles, Clock } from "lucide-react";
 import { useAuth } from "@/stores/auth";
 import { cn } from "@/lib/utils";
 
-/** Faixa discreta do teste grátis: some no plano completo; fica mais visível nos últimos 5 dias. */
+/** Dias de teste em que a faixa começa a aparecer. Antes disso o app não fala de prazo nenhum. */
+const AVISAR_A_PARTIR_DE = 7;
+
+/**
+ * Faixa do teste grátis. Só aparece na reta final (ou depois de vencido): o app é 100% livre nos 30
+ * dias, e um cronômetro no topo do Início desde o primeiro acesso faz o app parecer demonstração.
+ */
 export function BannerTeste({ className }: { className?: string }) {
   const usuario = useAuth((s) => s.usuario);
   if (!usuario || usuario.plano === "completo") return null;
   const dias = usuario.dias_restantes_teste ?? 0;
   const acabando = dias <= 5;
   const acabou = dias <= 0;
+  if (dias > AVISAR_A_PARTIR_DE) return null;
 
   return (
     <Link

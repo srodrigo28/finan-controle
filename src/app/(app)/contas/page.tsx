@@ -8,9 +8,11 @@ import { Plus, ChevronLeft, ChevronRight, CheckCircle2, Circle, AlertCircle, Cal
 import { addMonths, format, subMonths } from "date-fns";
 import { useContas, useOcorrencias } from "@/hooks/use-contas";
 import { useCategorias } from "@/hooks/use-categorias";
+import { useHoje } from "@/hooks/use-hoje";
 import { Cabecalho } from "@/components/layout/cabecalho";
 import { Botao } from "@/components/ui/botao";
 import { BotaoFlutuante } from "@/components/ui/botao-flutuante";
+import { usePlano } from "@/hooks/use-plano";
 import { Folha } from "@/components/ui/folha";
 import { Confirmar } from "@/components/ui/confirmar";
 import { Campo, CampoMoeda } from "@/components/ui/campo";
@@ -24,11 +26,16 @@ import type { Categoria, ContaAgendada, OcorrenciaConta } from "@/lib/tipos";
 
 
 export default function PaginaContas() {
-  const [ref, setRef] = useState(new Date());
+  const hoje = useHoje();
+  // `null` = seguindo a competência corrente (acompanha a virada do mês sozinho).
+  const [escolha, setEscolha] = useState<Date | null>(null);
+  const ref = escolha ?? hoje;
   const competencia = format(ref, "yyyy-MM");
+  const irPara = (d: Date) => setEscolha(format(d, "yyyy-MM") === format(hoje, "yyyy-MM") ? null : d);
   const { data, isPending } = useOcorrencias(competencia);
   const { contas, criar, atualizar, arquivar, reativar, excluir, pagar, reabrir, ajustarOcorrencia, excluirOcorrencia } = useContas({ incluirInativas: true });
   const { mapa } = useCategorias();
+  const { aoCriar } = usePlano();
   const [editando, setEditando] = useState<ContaAgendada | null | "nova">(null);
   const [pagando, setPagando] = useState<OcorrenciaConta | null>(null);
   const [ajustando, setAjustando] = useState<OcorrenciaConta | null>(null);
@@ -51,9 +58,9 @@ export default function PaginaContas() {
       {aba === "mes" ? (
         <>
           <div className="flex items-center justify-between">
-            <button type="button" aria-label="Mês anterior" onClick={() => setRef(subMonths(ref, 1))} className="grid size-10 place-items-center rounded-full hover:bg-surface-2"><ChevronLeft className="size-5" /></button>
+            <button type="button" aria-label="Mês anterior" onClick={() => irPara(subMonths(ref, 1))} className="grid size-10 place-items-center rounded-full hover:bg-surface-2"><ChevronLeft className="size-5" /></button>
             <p className="font-semibold capitalize">{mesExtenso(competencia)}</p>
-            <button type="button" aria-label="Próximo mês" onClick={() => setRef(addMonths(ref, 1))} className="grid size-10 place-items-center rounded-full hover:bg-surface-2"><ChevronRight className="size-5" /></button>
+            <button type="button" aria-label="Próximo mês" onClick={() => irPara(addMonths(ref, 1))} className="grid size-10 place-items-center rounded-full hover:bg-surface-2"><ChevronRight className="size-5" /></button>
           </div>
 
           <section className="cartao p-5">
@@ -125,7 +132,7 @@ export default function PaginaContas() {
         </>
       )}
 
-      <BotaoFlutuante rotulo="Nova conta" onClick={() => setEditando("nova")} />
+      <BotaoFlutuante rotulo="Nova conta" onClick={aoCriar(() => setEditando("nova"))} />
 
       <FolhaConta
         aberta={editando !== null}

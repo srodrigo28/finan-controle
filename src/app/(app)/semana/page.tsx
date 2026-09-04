@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState, useEffect } from "react";
+import { useHoje } from "@/hooks/use-hoje";
 import { motion } from "motion/react";
 import { ArrowDownRight, ArrowUpRight, Crown, CalendarRange } from "lucide-react";
 import { addWeeks, eachDayOfInterval, format, parseISO, startOfWeek, subWeeks, isSameWeek } from "date-fns";
@@ -19,9 +20,13 @@ import { cn } from "@/lib/utils";
 const SEMANAS_ATRAS = 16;
 
 export default function PaginaSemana() {
-  const [hoje] = useState(() => new Date());
-  const [inicioAtual] = useState(() => startOfWeek(hoje, { weekStartsOn: 1 }));
-  const [inicio, setInicio] = useState(inicioAtual);
+  const hoje = useHoje();
+  const inicioAtual = useMemo(() => startOfWeek(hoje, { weekStartsOn: 1 }), [hoje]);
+  // `null` = seguindo a semana corrente. Assim a virada do dia (ou a volta do app depois de dias
+  // suspenso) reposiciona sozinha, sem tirar de onde a pessoa navegou por conta própria.
+  const [escolha, setEscolha] = useState<Date | null>(null);
+  const inicio = escolha ?? inicioAtual;
+  const escolherSemana = (s: Date) => setEscolha(isSameWeek(s, inicioAtual, { weekStartsOn: 1 }) ? null : s);
   const chave = format(inicio, "yyyy-MM-dd");
   const { data, isPending } = useMetricaSemanal(chave);
   const { mapa } = useCategorias();
@@ -39,9 +44,15 @@ export default function PaginaSemana() {
     return eachDayOfInterval({ start: inicio, end: new Date(fim.getTime() - 1) }).map((d) => {
       const iso = format(d, "yyyy-MM-dd");
       const p = data?.por_dia.find((x) => x.data === iso);
-      return { chave: iso, rotulo: format(d, "EEEEEE", { locale: ptBR }), valor: p?.total ?? 0, destaque: data?.dia_mais_caro === iso };
+      return {
+        chave: iso,
+        rotulo: format(d, "EEEEEE", { locale: ptBR }),
+        valor: p?.total ?? 0,
+        destaque: data?.dia_mais_caro === iso,
+        hoje: iso === format(hoje, "yyyy-MM-dd"),
+      };
     });
-  }, [inicio, data]);
+  }, [inicio, data, hoje]);
 
   const variacao = data?.variacao_pct ?? null;
   const subiu = (data?.variacao_valor ?? 0) > 0;
@@ -60,15 +71,16 @@ export default function PaginaSemana() {
               key={s.toISOString()}
               type="button"
               data-ativa={ativa ? "1" : "0"}
-              onClick={() => setInicio(s)}
+              onClick={() => escolherSemana(s)}
               className={cn(
                 "flex w-[72px] shrink-0 flex-col items-center rounded-2xl border px-2 py-2.5 transition-colors",
                 ativa ? "border-transparent bg-accent text-accent-fg botao-brilho" : "border-border bg-surface text-text-2",
               )}
             >
-              <span className="text-[10px] uppercase tracking-wider opacity-70">{format(s, "MMM", { locale: ptBR })}</span>
-              <span className="text-lg font-semibold leading-tight">{format(s, "dd")}</span>
-              <span className="text-[10px] opacity-70">{atual ? "atual" : `a ${format(addWeeks(s, 1), "dd")}`}</span>
+              {/* Na semana corrente o chip fala do dia de hoje; nas outras, do começo da semana. */}
+              <span className="text-[10px] uppercase tracking-wider opacity-70">{format(atual ? hoje : s, "MMM", { locale: ptBR })}</span>
+              <span className="text-lg font-semibold leading-tight">{format(atual ? hoje : s, "dd")}</span>
+              <span className="text-[10px] opacity-70">{atual ? "hoje" : `a ${format(addWeeks(s, 1), "dd")}`}</span>
             </button>
           );
         })}
