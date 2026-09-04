@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { motion } from "motion/react";
 import { Minus, Plus } from "lucide-react";
 import { cn, vibrar } from "@/lib/utils";
@@ -137,6 +138,9 @@ export function Segmentado<T extends string>({
   aoMudar: (v: T) => void;
   className?: string;
 }) {
+  // layoutId por instância: com dois Segmentados na mesma tela, um id fixo faria o
+  // indicador saltar de um grupo para o outro.
+  const idGrupo = useId();
   return (
     <div className={cn("relative flex rounded-full bg-surface-2 p-1", className)} role="tablist">
       {opcoes.map((o) => {
@@ -151,7 +155,7 @@ export function Segmentado<T extends string>({
             className={cn("relative z-10 flex-1 rounded-full py-2 text-sm font-medium transition-colors", ativo ? "text-bg" : "text-text-2")}
           >
             {ativo ? (
-              <motion.span layoutId="seg-ativo" className="absolute inset-0 -z-10 rounded-full bg-text" transition={{ type: "spring", stiffness: 400, damping: 32 }} />
+              <motion.span layoutId={`seg-ativo-${idGrupo}`} className="absolute inset-0 -z-10 rounded-full bg-text" transition={{ type: "spring", stiffness: 400, damping: 32 }} />
             ) : null}
             {o.rotulo}
           </button>

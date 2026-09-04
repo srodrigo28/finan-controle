@@ -10,6 +10,7 @@ import { Cabecalho } from "@/components/layout/cabecalho";
 import { Valor } from "@/components/ui/valor";
 import { Botao } from "@/components/ui/botao";
 import { Folha } from "@/components/ui/folha";
+import { Confirmar } from "@/components/ui/confirmar";
 import { IconeCategoria } from "@/components/ui/icone-categoria";
 import { Skeleton } from "@/components/ui/diversos";
 import { FormularioLancamento } from "@/components/formulario-lancamento";
@@ -23,6 +24,7 @@ export default function PaginaDetalheLancamento({ params }: PageProps<"/lancamen
   const { mapa } = useCategorias();
   const { excluir, anexar, removerAnexo } = useMutacoesLancamento();
   const [editando, setEditando] = useState(false);
+  const [excluindo, setExcluindo] = useState(false);
   const refArquivo = useRef<HTMLInputElement>(null);
 
   if (isPending || !l) {
@@ -39,7 +41,6 @@ export default function PaginaDetalheLancamento({ params }: PageProps<"/lancamen
   const forma = FORMAS_PAGAMENTO.find((f) => f.valor === l.forma_pagamento)?.rotulo;
 
   const apagar = async () => {
-    if (!confirm("Excluir este lançamento?")) return;
     await excluir.mutateAsync(l.id);
     toast.success("Lançamento excluído");
     roteador.replace("/lancamentos");
@@ -65,7 +66,7 @@ export default function PaginaDetalheLancamento({ params }: PageProps<"/lancamen
             {!l.sessao_id ? (
               <Botao variante="fantasma" tamanho="icone" aria-label="Editar" onClick={() => setEditando(true)}><Pencil className="size-5" /></Botao>
             ) : null}
-            <Botao variante="fantasma" tamanho="icone" aria-label="Excluir" onClick={apagar} carregando={excluir.isPending}><Trash2 className="size-5 text-danger" /></Botao>
+            <Botao variante="fantasma" tamanho="icone" aria-label="Excluir" onClick={() => setExcluindo(true)} carregando={excluir.isPending}><Trash2 className="size-5 text-danger" /></Botao>
           </>
         }
       />
@@ -138,6 +139,16 @@ export default function PaginaDetalheLancamento({ params }: PageProps<"/lancamen
           </ul>
         )}
       </section>
+
+      <Confirmar
+        aberta={excluindo}
+        aoMudar={setExcluindo}
+        titulo="Excluir este lançamento?"
+        descricao="Ele sai dos seus totais do dia, da semana e do mês. Não dá para desfazer."
+        rotuloConfirmar="Excluir"
+        perigo
+        aoConfirmar={apagar}
+      />
 
       <Folha aberta={editando} aoMudar={setEditando} titulo="Editar lançamento">
         <FormularioLancamento inicial={l} emFolha />

@@ -92,6 +92,7 @@ await shot(page, "11-fechar-divergencia");
 await page.getByRole("button", { name: /^Confirmar/ }).click();
 await page.waitForTimeout(900);
 await shot(page, "12-fechado");
+await page.getByRole("button", { name: "Ir para o início" }).click();
 await page.waitForURL(`${base}/inicio`, { timeout: 40000 });
 await page.waitForTimeout(1200);
 await shot(page, "13-inicio");

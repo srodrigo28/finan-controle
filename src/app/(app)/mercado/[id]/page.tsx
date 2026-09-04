@@ -11,6 +11,7 @@ import { useCategorias } from "@/hooks/use-categorias";
 import { Valor } from "@/components/ui/valor";
 import { Botao } from "@/components/ui/botao";
 import { Folha } from "@/components/ui/folha";
+import { Confirmar } from "@/components/ui/confirmar";
 import { Campo, CampoMoeda } from "@/components/ui/campo";
 import { Chip, Vazio } from "@/components/ui/diversos";
 import { FolhaAdicionarItem } from "@/components/mercado/folha-adicionar-item";
@@ -28,6 +29,7 @@ export default function PaginaCarrinho({ params }: PageProps<"/mercado/[id]">) {
   const [editando, setEditando] = useState<ItemLocal | null>(null);
   const [filtro, setFiltro] = useState<string | null | "todas">("todas");
   const [opcoes, setOpcoes] = useState(false);
+  const [abandonando, setAbandonando] = useState(false);
   const [local, setLocal] = useState("");
   const [orcamento, setOrcamento] = useState(0);
 
@@ -197,11 +199,9 @@ export default function PaginaCarrinho({ params }: PageProps<"/mercado/[id]">) {
             <Botao
               cheio
               variante="perigo"
-              onClick={async () => {
-                if (!confirm("Abandonar esta compra? Os itens não viram lançamento.")) return;
-                await abandonar();
+              onClick={() => {
                 setOpcoes(false);
-                roteador.replace("/mercado");
+                setAbandonando(true);
               }}
             >
               Abandonar compra
@@ -209,6 +209,19 @@ export default function PaginaCarrinho({ params }: PageProps<"/mercado/[id]">) {
           ) : null}
         </div>
       </Folha>
+
+      <Confirmar
+        aberta={abandonando}
+        aoMudar={setAbandonando}
+        titulo="Abandonar esta compra?"
+        descricao="Os itens do carrinho não viram lançamento. Não dá para desfazer."
+        rotuloConfirmar="Abandonar compra"
+        perigo
+        aoConfirmar={async () => {
+          await abandonar();
+          roteador.replace("/mercado");
+        }}
+      />
     </div>
   );
 }

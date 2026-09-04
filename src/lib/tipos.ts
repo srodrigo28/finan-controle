@@ -86,6 +86,8 @@ export type SessaoCompra = {
 
 export type Recorrencia = "mensal" | "semanal" | "anual" | "unica";
 
+export type StatusOcorrencia = "pendente" | "paga" | "atrasada" | "pulada";
+
 export type ContaAgendada = {
   id: string;
   nome: string;
@@ -95,7 +97,18 @@ export type ContaAgendada = {
   categoria_id: string | null;
   ativa: boolean;
   lembrete_dias: number;
+  /** Anual e única: mês (1-12) do vencimento. Única também fixa o ano. */
+  mes_referencia: number | null;
+  ano_referencia: number | null;
   criado_em: string;
+};
+
+export type ResumoConta = {
+  ocorrencias_total: number;
+  pagas: number;
+  total_pago: number;
+  media_paga: number | null;
+  ultimo_pagamento: string | null;
 };
 
 export type OcorrenciaConta = {
@@ -104,7 +117,7 @@ export type OcorrenciaConta = {
   competencia: string;
   vencimento: string;
   valor_real: number | null;
-  status: "pendente" | "paga" | "atrasada";
+  status: StatusOcorrencia;
   lancamento_id: string | null;
   conta: { nome: string; categoria_id: string | null; valor_estimado: number };
 };

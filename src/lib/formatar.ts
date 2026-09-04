@@ -64,6 +64,11 @@ export function mascaraCentavos(digitos: string) {
   return { valor: n, texto: fmtNum.format(n) };
 }
 
+/** Meses abreviados (1-12) para seletores compactos. */
+export const MESES = [
+  "jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez",
+].map((rotulo, i) => ({ valor: i + 1, rotulo }));
+
 export const FORMAS_PAGAMENTO: { valor: string; rotulo: string }[] = [
   { valor: "pix", rotulo: "Pix" },
   { valor: "debito", rotulo: "Débito" },
