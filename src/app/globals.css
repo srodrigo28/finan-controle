@@ -22,6 +22,10 @@
   --danger: #e5484d;
   --danger-soft: rgba(229, 72, 77, 0.12);
   --shadow: 0 1px 2px rgba(18, 23, 22, 0.05), 0 8px 24px -12px rgba(18, 23, 22, 0.15);
+  /* Modo Mercado: o painel do total é verde nos dois temas (é a marca da tela, lida sob luz forte).
+     O que muda no claro é só o corpo, que segue --bg. */
+  --mercado: #2fd6a2;
+  --mercado-fg: #06261c;
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-t: env(safe-area-inset-top, 0px);
   color-scheme: light;
@@ -61,6 +65,8 @@
   --color-accent-strong: var(--accent-strong);
   --color-accent-soft: var(--accent-soft);
   --color-accent-fg: var(--accent-fg);
+  --color-mercado: var(--mercado);
+  --color-mercado-fg: var(--mercado-fg);
   --color-warn: var(--warn);
   --color-warn-soft: var(--warn-soft);
   --color-danger: var(--danger);

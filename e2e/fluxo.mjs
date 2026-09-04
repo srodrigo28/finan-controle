@@ -60,7 +60,7 @@ const itens = [
   ["Cerveja lata", "450", 12],
 ];
 for (const [desc, preco, qtd] of itens) {
-  await page.getByRole("button", { name: /^Adicionar$/ }).click();
+  await page.getByRole("button", { name: "Adicionar item" }).click();
   await page.getByPlaceholder("Ex.: arroz 5kg").fill(desc);
   await page.locator('input[inputmode="numeric"]').fill(preco);
   for (let i = 1; i < qtd; i++) await page.getByRole("button", { name: "Aumentar" }).click();
@@ -81,7 +81,7 @@ if ((await chips.count()) > 1) {
 }
 
 // 5. Fechar
-await page.getByRole("link", { name: "Fechar" }).click();
+await page.getByRole("button", { name: "Fechar compra" }).click();
 await page.waitForURL(/\/fechar$/);
 await page.waitForTimeout(500);
 await shot(page, "10-fechar-conferencia");

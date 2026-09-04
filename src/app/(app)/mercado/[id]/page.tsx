@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
-import { ChevronLeft, Plus, ShoppingBasket, MoreHorizontal, Filter, X } from "lucide-react";
+import { ChevronLeft, Plus, ShoppingBasket, ShoppingCart, MoreHorizontal, Filter, X, ReceiptText } from "lucide-react";
 import { useSessao } from "@/hooks/use-sessoes";
 import { useCategorias } from "@/hooks/use-categorias";
 import { Valor } from "@/components/ui/valor";
@@ -65,7 +65,8 @@ export default function PaginaCarrinho({ params }: PageProps<"/mercado/[id]">) {
       <header
         className={cn(
           "sticky top-0 z-20 rounded-b-[28px] px-5 pb-5 pt-[calc(0.5rem+var(--safe-t))] shadow-card transition-colors duration-500",
-          estourou ? "bg-danger text-white" : "bg-text text-bg",
+          // Verde nos dois temas: é a assinatura da tela e o que se lê de longe no corredor do mercado.
+          estourou ? "bg-danger text-white" : "bg-mercado text-mercado-fg",
         )}
       >
         <div className="flex items-center justify-between">
@@ -80,7 +81,7 @@ export default function PaginaCarrinho({ params }: PageProps<"/mercado/[id]">) {
         <div className="mt-2 flex items-end justify-between gap-3">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider opacity-70">{fechada ? "Total da compra" : "Total no carrinho"}</p>
-            <Valor valor={total} tamanho="hero" animado className={estourou ? "[&_*]:text-white [&_*]:opacity-90" : "[&_.text-muted]:text-bg/60 [&_.text-text-2]:text-bg/70"} />
+            <Valor valor={total} tamanho="hero" animado className={cn("[&_*]:text-[color:inherit]", estourou ? "[&_*]:opacity-90" : "[&_.text-muted]:opacity-60 [&_.text-text-2]:opacity-70")} />
           </div>
           <div className="pb-1 text-right text-xs opacity-80">
             <p className="tnum">{ativos.length} {ativos.length === 1 ? "item" : "itens"}</p>
@@ -89,8 +90,8 @@ export default function PaginaCarrinho({ params }: PageProps<"/mercado/[id]">) {
         </div>
         {sessao.orcamento ? (
           <div className="mt-3">
-            <div className="h-2 overflow-hidden rounded-full bg-white/15">
-              <motion.div className={cn("h-full rounded-full", estourou ? "bg-white" : pct >= 0.85 ? "bg-warn" : "bg-accent")} animate={{ width: `${Math.min(100, pct * 100)}%` }} transition={{ type: "spring", stiffness: 120, damping: 20 }} />
+            <div className="h-2 overflow-hidden rounded-full bg-mercado-fg/15">
+              <motion.div className={cn("h-full rounded-full", estourou ? "bg-white" : pct >= 0.85 ? "bg-warn" : "bg-mercado-fg/70")} animate={{ width: `${Math.min(100, pct * 100)}%` }} transition={{ type: "spring", stiffness: 120, damping: 20 }} />
             </div>
             <p className="mt-1.5 text-xs opacity-80">
               {estourou ? `Passou ${moeda(Math.abs(restante ?? 0))} do orçamento` : `Ainda cabem ${moeda(restante ?? 0)}`}
@@ -127,7 +128,11 @@ export default function PaginaCarrinho({ params }: PageProps<"/mercado/[id]">) {
           </div>
         ) : null}
         {ativos.length === 0 ? (
-          <Vazio icone={ShoppingBasket} titulo="Carrinho vazio" descricao="Toque em Adicionar e digite o item e o preço. Você vê o total crescer aqui em cima." />
+          <div className="flex flex-col items-center justify-center gap-3 px-8 py-20 text-center">
+            <ShoppingCart className="size-12 text-mercado" strokeWidth={1.75} />
+            <p className="text-lg font-semibold">Carrinho vazio</p>
+            <p className="max-w-[16rem] text-sm text-text-2">Toque no + e digite o item e o preço.</p>
+          </div>
         ) : (
           <ul className="space-y-2">
             <AnimatePresence initial={false}>
@@ -147,16 +152,39 @@ export default function PaginaCarrinho({ params }: PageProps<"/mercado/[id]">) {
 
       {/* Ações na zona do polegar */}
       {!fechada ? (
-        <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-lg px-4 pb-[calc(1rem+var(--safe-b))] pt-3 md:max-w-2xl" style={{ background: "linear-gradient(to top, var(--bg) 60%, transparent)" }}>
-          <div className="flex gap-3">
-            <Botao tamanho="lg" cheio onClick={() => setAdicionando(true)} className="flex-[2]">
-              <Plus className="size-5" strokeWidth={2.5} /> Adicionar
-            </Botao>
-            <Link href={`/mercado/${id}/fechar`} className="flex-1">
-              <Botao tamanho="lg" cheio variante="contorno" disabled={ativos.length === 0}>
-                Fechar
-              </Botao>
-            </Link>
+        <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-lg px-4 pb-[calc(0.75rem+var(--safe-b))] pt-10 md:max-w-2xl">
+          {/* Abandonar · adicionar · fechar. O + no meio, elevado, é o único alvo que a mão procura
+              enquanto empurra o carrinho — os outros dois ficam nas pontas, longe do toque acidental. */}
+          <div className="relative flex items-center justify-between rounded-[28px] border border-border bg-surface px-7 py-3 shadow-card">
+            <button
+              type="button"
+              aria-label="Abandonar compra"
+              onClick={() => setAbandonando(true)}
+              className="grid size-11 place-items-center rounded-full text-danger transition-colors hover:bg-danger-soft"
+            >
+              <X className="size-6" strokeWidth={2.4} />
+            </button>
+
+            <button
+              type="button"
+              aria-label="Adicionar item"
+              onClick={() => setAdicionando(true)}
+              className="absolute -top-7 left-1/2 grid size-16 -translate-x-1/2 place-items-center rounded-full bg-mercado text-mercado-fg shadow-lg shadow-mercado/30 botao-brilho"
+            >
+              <motion.span whileTap={{ scale: 0.9 }} className="grid place-items-center">
+                <Plus className="size-7" strokeWidth={2.5} />
+              </motion.span>
+            </button>
+
+            <button
+              type="button"
+              aria-label="Fechar compra"
+              disabled={ativos.length === 0}
+              onClick={() => roteador.push(`/mercado/${id}/fechar`)}
+              className="grid size-11 place-items-center rounded-full text-text-2 transition-colors hover:bg-surface-2 disabled:opacity-30"
+            >
+              <ReceiptText className="size-6" />
+            </button>
           </div>
         </div>
       ) : (
@@ -195,18 +223,7 @@ export default function PaginaCarrinho({ params }: PageProps<"/mercado/[id]">) {
           <Botao cheio tamanho="lg" onClick={async () => { await atualizarSessao({ local: local.trim() || null, orcamento: orcamento > 0 ? orcamento : null }); setOpcoes(false); }}>
             Salvar
           </Botao>
-          {!fechada ? (
-            <Botao
-              cheio
-              variante="perigo"
-              onClick={() => {
-                setOpcoes(false);
-                setAbandonando(true);
-              }}
-            >
-              Abandonar compra
-            </Botao>
-          ) : null}
+
         </div>
       </Folha>
 

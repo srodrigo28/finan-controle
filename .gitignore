@@ -42,3 +42,8 @@ next-env.d.ts
 
 # capturas do e2e (geradas por node e2e/fluxo.mjs)
 e2e/capturas/
+
+# arquivos de sinalização do e2e/deploy.sh
+e2e/.pronto-para-deploy
+e2e/.deploy-feito
+e2e/.saida-deploy
